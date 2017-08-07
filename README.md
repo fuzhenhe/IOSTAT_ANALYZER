@@ -1,14 +1,10 @@
-# iostat_req_analyzer
+**** Sampel Outputs ****
 
-*put split_by_date.sh to output folder.
-*cd to the output folder and execute the split_by_date.sh
-
-Sample Output 1
-root@ycheng:/home/ycheng/Downloads/iostat# ./iostat_analysis_io_req.sh ./iostat_ceph1_2017_07_09to31 
+ycheng@ycheng:~/Work/iostat_analyzer$ ./iostat_analysis_io_req.sh iostat_ceph1_2017_07_09to31
 
 ===========================================================
-Date Time    = 四  8月  3 16:21:55 CST 2017 
-File Path    = ./iostat_ceph1_2017_07_09to31
+Date Time    = 一  8月  7 18:47:57 CST 2017 
+File Path    = iostat_ceph1_2017_07_09to31
 Record Count = 186413 (on each disk)
 ===========================================================
 
@@ -23,16 +19,16 @@ New Time(24 hour format):
   Last Time Record  -  2017/07/31 15:57:41
 
 
-[ Convert to csv file... ]
+[ Convert to csv file - include title in csv = false ]
 -----------------------------------------------------------
-step 1 ...
-step 2 ...
-step 3 ...
-final step, refining data...
-csv output files...
-./output/disks_r_req.csv
-./output/disks_w_req.csv
-./output/disks_rw_req.csv
+Step 1 ...
+Step 2 ...
+Step 3 ...
+Final step, refining data ...
+CSV output files:
+  ./output/disks_r_req.csv
+  ./output/disks_w_req.csv
+  ./output/disks_rw_req.csv
 
 
 [ Analysis Disk IO Request - analysis io type = r ]
@@ -83,44 +79,62 @@ sdj 24373
 sdk 24251
 
 
+ycheng@ycheng:~/Work/iostat_analyzer$ ./split_by_day.sh 
 
-Sample output 2
-ycheng@ycheng:~/Downloads/iostat/output$ ./split_by_day.sh 
-2017-07-9
-sdd 0 0 0 0 0 0 0 0 0 0 0
-sde 0 0 0 0 0 0 0 0 0 0 0
-sdf 0 0 0 0 0 0 0 0 0 0 0
-sdg 0 0 0 0 0 0 0 0 0 0 0
-sdh 0 0 0 0 0 0 0 0 0 0 0
-sdi 0 0 0 0 0 0 0 0 0 0 0
-sdj 0 0 0 0 0 0 0 0 0 0 0
-sdk 0 0 0 0 0 0 0 0 0 0 0
+===========================================================
+Year  - 2017
+Month - 07
+Day   - 09 10 11 12 13 14 15
+===========================================================
 
-2017-07-10
-sdd 2132 4336 2039 127 6 0 0 0 0 0 0
-sde 3562 3870 915 279 13 1 0 0 0 0 0
-sdf 2524 4423 1421 260 12 0 0 0 0 0 0
-sdg 3387 3827 1347 79 0 0 0 0 0 0 0
-sdh 3603 4073 858 105 1 0 0 0 0 0 0
-sdi 2978 4165 1238 248 11 0 0 0 0 0 0
-sdj 3066 3946 1338 282 8 0 0 0 0 0 0
-sdk 3110 3914 1474 141 1 0 0 0 0 0 0
+[ Processing Environment Setup ]
+-----------------------------------------------------------
+File check pass.
+  disks_r_req.csv
+  disks_w_req.csv
+  disks_rw_req.csv
+Group directory initialized.
+Set host IO request title file.
+Get record count.
+  186413 disks_r_req.csv
+  186413 disks_w_req.csv
+  186413 disks_rw_req.csv
 
-2017-07-11
-sdd 2849 4419 1344 28 0 0 0 0 0 0 0
-sde 4767 3629 241 2 1 0 0 0 0 0 0
-sdf 3236 4704 685 15 0 0 0 0 0 0 0
-sdg 3842 3978 806 13 1 0 0 0 0 0 0
-sdh 4258 3994 380 7 1 0 0 0 0 0 0
-sdi 3602 4423 605 9 1 0 0 0 0 0 0
-sdj 3641 4244 745 10 0 0 0 0 0 0 0
-sdk 3776 4132 724 7 1 0 0 0 0 0 0
+[ Start split by day processing ]
+-----------------------------------------------------------
+  processing 2017/07/09
+  processing 2017/07/10
+  processing 2017/07/11
+  processing 2017/07/12
+  processing 2017/07/13
+  processing 2017/07/14
+  processing 2017/07/15
 
-key  : sdg, value: 17280
-key  : sdf, value: 17280
-key  : sde, value: 17280
-key  : sdd, value: 17280
-key  : sdk, value: 17280
-key  : sdj, value: 17280
-key  : sdi, value: 17280
-key  : sdh, value: 17280
+[ Verify IO loading stastistic ]
+-----------------------------------------------------------
+Read:
+      2017/07/09: 5760 5760 5760 5760 5760 5760 5760 5760 
+      2017/07/10: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/11: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/12: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/13: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/14: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/15: 8640 8640 8640 8640 8640 8640 8640 8640 
+Write:
+      2017/07/09: 5760 5760 5760 5760 5760 5760 5760 5760 
+      2017/07/10: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/11: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/12: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/13: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/14: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/15: 8640 8640 8640 8640 8640 8640 8640 8640 
+Read + Write:
+      2017/07/09: 5760 5760 5760 5760 5760 5760 5760 5760 
+      2017/07/10: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/11: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/12: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/13: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/14: 8640 8640 8640 8640 8640 8640 8640 8640 
+      2017/07/15: 8640 8640 8640 8640 8640 8640 8640 8640 
+
+*each count of disk should be the same if calculated correctly
