@@ -15,6 +15,10 @@
 disk_list=(sdd sde sdf sdg sdh sdi sdj sdk)
 count_req_section=(0 1 2 3 4 5 6 7 8 9 10)
 
+# true or false
+ctl_include_title_in_csv='false'
+
+
 output_dir='./output/'
 temp_dir='./tmp/'
 
@@ -29,10 +33,13 @@ time_shift_hours=8
 grep_datetime_key="AM\|PM"
 #grep_datetime_key="^${date_year}\/"
 
-# to match value greater than
+# for calculating number of request above. 
+# to match value greater than value
 above200="^[2-9][0-9][0-9]\."
 above250="^2[5-9][0-9]\.\|^3[0-9][0-9]\."
 above300="^3[0-9][0-9]\."
+
+
 
 
 # ===========================================================
@@ -126,24 +133,35 @@ function shift_hours() {
 }
 
 
+function insert_file_at_begin() {
+    local original=${1}
+    local insert_file=${2}
+
+    cat ${insert_file} ${original} > ${original}.tmp
+    rm -rf ${original}
+    mv ${original}.tmp ${original}
+}
+
+
 # generate CSV format analysis output 
 # * this function have to modified if the datetime string is not like Ex. "07/09/2017 12:00:01 AM"
 # global variable used
 #   timefile 
 #   new_timefile
 #   date_year
+#   ctl_include_title_in_csv
 function convert_to_csv() {
     local file_name=${1}
     local replace_year=${date_year}
     
-    echo -e "\n[ Convert to csv file... ]"   
+    echo -e "\n[ Convert to csv file - include title in csv = ${ctl_include_title_in_csv} ]"
     echo "-----------------------------------------------------------"
     
     # step 1, combin date and time with underscore _
     #   first line of the file might look like below, we need to filter it out
     #       "Linux 3.14.69-2+hlinux1-amd64-hlinux (helion-cp1-ceph0001-mgmt) 	07/09/2017 	_x86_64_	(56 CPU)"
     #   grep date time and disk name line only
-    echo "step 1 ..."
+    echo "Step 1 ..."
     tmp_r_req_file="${temp_dir}r_req"
     tmp_w_req_file="${temp_dir}w_req"
     tmp_rw_req_file="${temp_dir}rw_req"
@@ -154,7 +172,7 @@ function convert_to_csv() {
 
     # step2, parser read, write, read+write of each disk
     #   
-    echo "step 2 ..."
+    echo "Step 2 ..."
     disks_read_req=""
     disks_write_req=""
     disks_read_write_req=""
@@ -178,7 +196,7 @@ function convert_to_csv() {
 
     # final raw result in tab format (in temp dir)
     # combine all disks into one file
-    echo "step 3 ..."
+    echo "Step 3 ..."
     r_req_name="disks_r_req.csv"
     w_req_name="disks_w_req.csv"
     rw_req_name="disks_rw_req.csv"
@@ -193,20 +211,29 @@ function convert_to_csv() {
 
     
     # final raw result in csv format (in output dir)
-    echo "final step, refining data..."
+    echo "Final step, refining data ..."
     cat ${tmp_disks_r} | sed 's/  / /g' | sed 's/\t/, /g' | sed 's/ , /, /g' > ${output_dir}${r_req_name}
     cat ${tmp_disks_w} | sed 's/  / /g' | sed 's/\t/, /g' | sed 's/ , /, /g' > ${output_dir}${w_req_name}
     cat ${tmp_disks_rw} | sed 's/  / /g' | sed 's/\t/, /g' | sed 's/ , /, /g' > ${output_dir}${rw_req_name}
 
-    # todo: append disks_output_title...
+    # append disks_output_title
+    if [[ "${ctl_include_title_in_csv}" == "true" ]]; then
+        insert_file_at_begin "${output_dir}${r_req_name}" "${output_dir}disks_output_title"
+        insert_file_at_begin "${output_dir}${w_req_name}" "${output_dir}disks_output_title"
+        insert_file_at_begin "${output_dir}${rw_req_name}" "${output_dir}disks_output_title"
+    fi
+    
+    echo "CSV output files:"
+    echo "  ${output_dir}${r_req_name}"
+    echo "  ${output_dir}${w_req_name}"
+    echo "  ${output_dir}${rw_req_name}"
 
-    echo "csv output files..."
-    echo ${output_dir}${r_req_name}
-    echo ${output_dir}${w_req_name}
-    echo ${output_dir}${rw_req_name}
-
+    rm -rf ${disks_output_title}
     echo
 }
+
+
+
 
 
 # core function to calculate matched record count
@@ -375,7 +402,7 @@ convert_to_csv ${file_name}
 
 
 
-# ( 2 ) calculate IO request
+# ( 2 ) analysis IO request
 # --------------------------------------
 analysis_disk_io_request ${file_name} "r" | tee ${output_dir}analysis_disk_read_req
 analysis_disk_io_request ${file_name} "w" | tee ${output_dir}analysis_disk_write_req
@@ -386,5 +413,3 @@ analysis_disk_io_request ${file_name} "b" | tee ${output_dir}analysis_disk_read_
 # ( 3 ) calculate IO request above
 # --------------------------------------
 calc_req_above ${file_name} ${above200} | tee ${output_dir}analysis_req_above200
-
-
