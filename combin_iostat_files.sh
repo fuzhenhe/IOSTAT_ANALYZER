@@ -7,13 +7,23 @@ node_name='ceph1'
 
 cmd='cat '
 
+prefix='iostat'
+file_path='./'
+
+output_file="${file_path}iostat_${node_name}_all_date"
+
+# filename example
+# iostat_ceph1_2017-07-18
 
 for date_day in ${date_day_list[@]}; do
 
-    file_name="iostat_${node_name}_${date_year}-${date_month}-${date_day}"
-    cmd="${cmd} ./${file_name} "
+    file_name="${prefix}_${node_name}_${date_year}-${date_month}-${date_day}"
+    cmd="${cmd} ${file_path}${file_name} "
+
 done
 
+
+echo "Command to execute:"
 echo ${cmd}
 
-`${cmd} > ./iostat_${node_name}_all_date`
+`${cmd} > ${output_file}`
