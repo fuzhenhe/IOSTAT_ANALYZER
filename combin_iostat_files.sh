@@ -27,3 +27,5 @@ echo "Command to execute:"
 echo ${cmd}
 
 `${cmd} > ${output_file}`
+
+echo "Combined File: ${output_file}"
