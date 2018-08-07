@@ -1,3 +1,13 @@
+**** install iostat and run on ubuntu ****
+```
+sudo apt-get install sysstat -y
+```
+
+**** collect iostat output into a file every 10 seconds and count up to 8640 (1 day) ****
+```
+iostat -tx 10 8640 >> /tmp/iostat_output
+```
+
 **** Sampel Outputs ****
 ```
 ycheng@ycheng:~/Work/iostat_analyzer$ ./iostat_analysis_io_req.sh iostat_ceph1_2017_07_09to31
